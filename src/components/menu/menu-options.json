@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Dashboard",
+    "name": "dashboard",
+    "url": "/"
+  },
+  {
+    "title": "Earning",
+    "name": "earning",
+    "url": "/earning"
+  },
+  {
+    "title": "Expense",
+    "name": "expense",
+    "url": "/expense"
+  },
+  {
+    "title": "Transaction",
+    "name": "transaction",
+    "url": "/transaction"
+  }
+]
