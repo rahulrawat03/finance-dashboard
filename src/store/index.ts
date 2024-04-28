@@ -89,6 +89,12 @@ class Store {
     this.transactions = this.transactions.filter(
       (transaction) => transaction.id !== id
     );
+
+    // Add to Local Storage too
+    localStorage.setItem(
+      this.transactionsKey,
+      JSON.stringify(this.transactions)
+    );
   }
 
   private get nextTransactionId() {

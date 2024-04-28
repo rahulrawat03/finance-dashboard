@@ -5,6 +5,7 @@ import { useStore } from "@rahulrawat03/mustate";
 import { TransactionItem } from "./TransactionItem";
 import { Transaction, TransactionType } from "@/src/types";
 import { useInitialLoad } from "@/src/hooks";
+import { AlertCircle } from "react-feather";
 
 interface TransactionListProps {
   transactionType: TransactionType;
@@ -32,6 +33,15 @@ export function TransactionList({
       break;
     default:
       transactions = store.transactions;
+  }
+
+  if (transactions.length === 0) {
+    return (
+      <div className="flex flex-col justify-center items-center">
+        <AlertCircle />
+        <p className="text-md">Nothing to show!</p>
+      </div>
+    );
   }
 
   return (
