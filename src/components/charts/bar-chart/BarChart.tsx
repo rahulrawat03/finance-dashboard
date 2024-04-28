@@ -1,26 +1,63 @@
-import { Bar } from "./Bar";
+"use client";
 
-interface BarChartProps {
-  positives: number[];
-  negatives: number[];
+import moment from "moment";
+import { Bar } from "./Bar";
+import { store } from "@/src/store";
+import { useInitialLoad } from "@/src/hooks";
+import { useStore } from "@rahulrawat03/mustate";
+
+function getFinanceData() {
+  const date = new Date();
+  let currentMoment = moment(date).subtract(6, "day");
+
+  const earnings = [];
+  const expenses = [];
+
+  for (let i = 0; i < 7; i++) {
+    let daysEarning = 0;
+    for (const earning of store.earnings) {
+      if (currentMoment.isSame(earning.date, "date")) {
+        daysEarning += earning.amount;
+      }
+    }
+    earnings.push(daysEarning);
+
+    let daysExpense = 0;
+    for (const expense of store.expenses) {
+      if (currentMoment.isSame(expense.date, "date")) {
+        daysExpense += expense.amount;
+      }
+    }
+    expenses.push(daysExpense);
+
+    currentMoment = currentMoment.add(1, "day");
+  }
+
+  return { earnings, expenses };
 }
 
 const MAX_BAR_SIZE = 64;
 
-export function BarChart({ positives, negatives }: Readonly<BarChartProps>) {
-  const numberOfBars = Math.max(positives.length, negatives.length);
+export function BarChart() {
+  useStore([
+    {
+      store: store,
+      include: ["transactions"],
+    },
+  ]);
 
-  if (numberOfBars === 0) {
-    return null;
-  }
+  useInitialLoad();
 
-  let totalSavings = positives.reduce((sum, positive) => sum + positive, 0);
-  totalSavings = negatives.reduce(
+  const { earnings, expenses } = getFinanceData();
+  const numberOfBars = Math.max(earnings.length, expenses.length);
+
+  let totalSavings = earnings.reduce((sum, earning) => sum + earning, 0);
+  totalSavings = expenses.reduce(
     (sum, negative) => sum - negative,
     totalSavings
   );
 
-  normalize(positives, negatives);
+  const normalizationFactor = normalize(earnings, expenses);
 
   return (
     <div className="w-80 h-fit bg-secondary-surface px-10 py-4 rounded-xl my-4 mx-auto md:mx-4">
@@ -35,8 +72,9 @@ export function BarChart({ positives, negatives }: Readonly<BarChartProps>) {
           .map((_, index) => (
             <Bar
               key={index}
-              positive={positives[index] ?? 0}
-              negative={negatives[index] ?? 0}
+              positive={earnings[index] ?? 0}
+              negative={expenses[index] ?? 0}
+              normalizationFactor={normalizationFactor}
             />
           ))}
       </div>
@@ -44,22 +82,24 @@ export function BarChart({ positives, negatives }: Readonly<BarChartProps>) {
   );
 }
 
-function normalize(positives: number[], negatives: number[]) {
-  let max = positives[0];
+function normalize(earnings: number[], expenses: number[]) {
+  let max = earnings[0];
 
-  for (const value of positives) {
+  for (const value of earnings) {
     max = Math.max(max, value);
   }
-  for (const value of negatives) {
+  for (const value of expenses) {
     max = Math.max(max, value);
   }
 
   let normalizationFactor = MAX_BAR_SIZE / max;
 
-  for (let i = 0; i < positives.length; i++) {
-    positives[i] *= normalizationFactor;
+  for (let i = 0; i < earnings.length; i++) {
+    earnings[i] *= normalizationFactor;
   }
-  for (let i = 0; i < negatives.length; i++) {
-    negatives[i] *= normalizationFactor;
+  for (let i = 0; i < expenses.length; i++) {
+    expenses[i] *= normalizationFactor;
   }
+
+  return normalizationFactor;
 }

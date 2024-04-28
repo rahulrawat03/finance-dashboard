@@ -37,7 +37,7 @@ export function TransactionList({
 
   if (transactions.length === 0) {
     return (
-      <div className="flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center mt-4">
         <AlertCircle />
         <p className="text-md">Nothing to show!</p>
       </div>

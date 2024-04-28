@@ -1,9 +1,16 @@
+"use client";
+
 interface BarProps {
   positive: number;
   negative: number;
+  normalizationFactor: number;
 }
 
-export function Bar({ positive, negative }: Readonly<BarProps>) {
+export function Bar({
+  positive,
+  negative,
+  normalizationFactor,
+}: Readonly<BarProps>) {
   return (
     <div className="relative h-0">
       <div
@@ -16,10 +23,10 @@ export function Bar({ positive, negative }: Readonly<BarProps>) {
         -translate-x-1/2 peer/negative"
       />
       <div className="absolute top-0 right-0 invisible bg-secondary-surface group-hover:visible shadow text-xs px-2 py-1 rounded-sm transition-all duration-200 peer-hover/positive:visible">
-        {positive.toFixed(1)}
+        {(positive / normalizationFactor).toFixed(1)}
       </div>
       <div className="absolute top-0 right-0 invisible bg-secondary-surface group-hover:visible shadow text-xs px-2 py-1 rounded-sm transition-all duration-200 peer-hover/negative:visible">
-        {negative.toFixed(1)}
+        {(negative / normalizationFactor).toFixed(1)}
       </div>
     </div>
   );
