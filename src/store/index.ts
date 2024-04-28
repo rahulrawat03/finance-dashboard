@@ -1,22 +1,56 @@
+import { createStore } from "@rahulrawat03/mustate";
+import { Transaction, TransactionType } from "@/src/types";
+import { months } from "@/src/utils";
+
 class Store {
   private static _instance: Store;
 
   public static get instance(): Store {
     if (!this._instance) {
-      this._instance = new Store();
+      this._instance = createStore(new Store());
     }
 
     return this._instance;
   }
 
-  private transactions: Transaction[];
+  public transactions: Transaction[] = [];
   private transactionsKey = "__finance_dashboard_transactions";
 
+  public title: string = "";
+  public amount: number = 0;
+  public currentDate: { day: string; month: string; year: string };
+
   private constructor() {
+    const now = new Date();
+    this.currentDate = {
+      day: now.getDate().toString(),
+      month: months[now.getMonth()].toString(),
+      year: now.getFullYear().toString(),
+    };
+  }
+
+  public get earnings() {
+    return this.transactions.filter(
+      (transaction) => transaction.type === TransactionType.earning
+    );
+  }
+
+  public get expenses() {
+    return this.transactions.filter(
+      (transaction) => transaction.type === TransactionType.expense
+    );
+  }
+
+  public loadInitialData() {
     try {
-      this.transactions = JSON.parse(
+      const transactions: (Transaction & { date: string })[] = JSON.parse(
         localStorage.getItem(this.transactionsKey) ?? "[]"
-      ) as Transaction[];
+      );
+
+      this.transactions = transactions.map((transaction) => ({
+        ...transaction,
+        date: new Date(transaction.date),
+      }));
     } catch (ex: unknown) {
       console.error("Failed to load the existing transactions!");
       localStorage.removeItem(this.transactionsKey);
@@ -24,15 +58,25 @@ class Store {
     }
   }
 
-  private add(title: string, date: Date, type: TransactionType) {
+  public add(type: TransactionType) {
+    if (!(this.title && this.currentDate)) {
+      console.error("Transaction could not be added!");
+      return;
+    }
+
     const transaction: Transaction = {
       id: this.nextTransactionId,
-      title,
-      date,
+      title: this.title,
+      amount: this.amount,
+      date: new Date(
+        parseInt(this.currentDate.year),
+        months.indexOf(this.currentDate.month),
+        parseInt(this.currentDate.day)
+      ),
       type,
     };
 
-    this.transactions.push(transaction);
+    this.transactions = [...this.transactions, transaction];
 
     // Add to Local Storage too
     localStorage.setItem(
@@ -41,7 +85,7 @@ class Store {
     );
   }
 
-  private delete(id: number) {
+  public delete(id: number) {
     this.transactions = this.transactions.filter(
       (transaction) => transaction.id !== id
     );
@@ -52,22 +96,8 @@ class Store {
       return 1;
     }
 
-    return this.transactions[this.transactions.length].id + 1;
-  }
-
-  public addEarning(title: string, date: Date) {
-    this.add(title, date, TransactionType.earning);
-  }
-
-  public addExpense(title: string, date: Date) {
-    this.add(title, date, TransactionType.expense);
-  }
-
-  public get deleteEarning() {
-    return this.delete;
-  }
-
-  public get deleteExpense() {
-    return this.delete;
+    return this.transactions[this.transactions.length - 1].id + 1;
   }
 }
+
+export const store = Store.instance;

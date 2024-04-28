@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-primary-surface">
+      <body className="bg-primary-surface md:flex">
         <Menu />
         {children}
       </body>

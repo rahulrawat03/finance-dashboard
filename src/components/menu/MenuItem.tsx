@@ -26,15 +26,15 @@ export function MenuItem({ title, url, name }: Readonly<MenuItemProps>) {
   return (
     <Link
       href={url}
-      className={`flex cursor-pointer text-lg align-middle py-2 px-4 rounded-full ${
+      className={`flex cursor-pointer text-lg py-2 px-4 rounded-full ${
         isActive ? "bg-primary-surface" : ""
-      } lg:mb-4 lg:hover:bg-primary-surface lg:transition-all lg:duration-200`}
+      } md:mb-4 md:hover:bg-primary-surface md:transition-all md:duration-200`}
     >
       <Icon />
       <p
         className={`ml-1 leading-6 ${
           isActive ? "" : "hidden"
-        } lg:block lg:ml-4`}
+        } md:block md:ml-4`}
       >
         {title}
       </p>

@@ -5,18 +5,18 @@
     "url": "/"
   },
   {
-    "title": "Earning",
+    "title": "Earnings",
     "name": "earning",
-    "url": "/earning"
+    "url": "/earnings"
   },
   {
-    "title": "Expense",
+    "title": "Expenses",
     "name": "expense",
-    "url": "/expense"
+    "url": "/expenses"
   },
   {
-    "title": "Transaction",
+    "title": "Transactions",
     "name": "transaction",
-    "url": "/transaction"
+    "url": "/transactions"
   }
 ]

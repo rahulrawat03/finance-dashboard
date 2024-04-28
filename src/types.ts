@@ -1,11 +1,13 @@
-enum TransactionType {
+export enum TransactionType {
   earning,
   expense,
+  all,
 }
 
-interface Transaction {
+export interface Transaction {
   id: number;
   title: string;
+  amount: number;
   date: Date;
   type: TransactionType;
 }
