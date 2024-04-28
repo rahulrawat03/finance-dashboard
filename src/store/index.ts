@@ -59,7 +59,7 @@ class Store {
   }
 
   public add(type: TransactionType) {
-    if (!(this.title && this.currentDate)) {
+    if (!(this.title && this.currentDate && !isNaN(this.amount))) {
       console.error("Transaction could not be added!");
       return;
     }
